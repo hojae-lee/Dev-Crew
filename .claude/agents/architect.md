@@ -11,13 +11,13 @@ tools:
 
 ## 입력
 - `docs/requirements.md`
-- `docs/brief.md` — 사전 확인된 Node.js/Python 버전, 선택된 기술 스택
+- `docs/brief.md` — 프로젝트명, 아이디어 원문, 추론된 맥락
 
 ## 출력: `docs/architecture.md`
 
 ### Tech Stack
 
-`docs/brief.md`의 스택 선택에 따라 아래 두 경우 중 하나를 적용한다.
+`docs/requirements.md`에 명시적인 스택 요청이 있으면 따르고, 없으면 기본값을 사용한다.
 
 **기본: Next.js 풀스택** (명시적 요청이 없으면 이것)
 - Framework: Next.js 16 (App Router, 풀스택)
