@@ -49,7 +49,7 @@ claude
       ↓
 ✋ Step 1.5  요구사항 확인
       ↓
-    Architect  기술 설계             docs/architecture.md
+    Architect  PRD + 기술 설계        docs/PRD.md
       ↓
 ✋ Step 3.5  설계 확인
       ↓
@@ -207,8 +207,8 @@ API 엔드포인트 구조 바꿔줘
 
 | 파일                    | 작성 에이전트 | 내용                          |
 | ----------------------- | ------------- | ----------------------------- |
-| `docs/requirements.md`  | PM            | 기능 목록, 수용 기준          |
-| `docs/architecture.md`  | Architect     | API, DB, 화면 설계            |
+| `docs/requirements.md`  | PM            | 제품 비전, 사용자, 기능 목록, 수용 기준 |
+| `docs/PRD.md`           | Architect     | 제품 컨텍스트 + API, DB, 화면 설계 통합 |
 | `docs/design-system.md` | Design        | UX 원칙, 톤앤매너, 디자인 토큰 |
 | `docs/review.md`        | Reviewer      | 코드 품질·완성도 검토 결과    |
 | `docs/qa-report.md`     | QA            | E2E 시나리오별 PASS/FAIL 결과 |
@@ -277,8 +277,8 @@ claude-architect/
 │
 ├── docs/                   ← 에이전트 간 공유 메모리 (런타임 생성)
 │   ├── brief.md            ← interviewer 출력 (PROJECT_NAME 포함)
-│   ├── requirements.md
-│   ├── architecture.md
+│   ├── requirements.md     ← PM 출력 (순수 PRD)
+│   ├── PRD.md              ← Architect 출력 (제품 컨텍스트 + 기술 스펙 통합)
 │   ├── design-system.md
 │   ├── maintenance-request.md
 │   ├── review.md

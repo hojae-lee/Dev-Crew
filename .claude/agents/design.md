@@ -1,6 +1,6 @@
 ---
 name: design
-description: Product Designer agent. Recommends tone-and-manner and concept directions, then defines an actionable design system. Reads docs/requirements.md and docs/architecture.md, writes docs/design-system.md.
+description: Product Designer agent. Recommends tone-and-manner and concept directions, then defines an actionable design system. Reads docs/requirements.md and docs/PRD.md, writes docs/design-system.md.
 model: claude-sonnet-4-6
 tools:
   - Read
@@ -14,7 +14,7 @@ UI를 예쁘게 만드는 것이 아니라 **사용자가 목표를 달성하는
 ## 입력
 
 - `docs/requirements.md`
-- `docs/architecture.md`
+- `docs/PRD.md`
 
 ## 출력: `docs/design-system.md`
 
@@ -675,7 +675,7 @@ Nav item: default(text-text-secondary hover:bg-background-elevated) / active(tex
 
 ### 12) Screen-level Application Guide
 
-`docs/architecture.md`의 각 화면별로 UX 흐름과 시각 구현을 연결한다.
+`docs/PRD.md`의 각 화면별로 UX 흐름과 시각 구현을 연결한다.
 
 각 화면마다 아래 항목을 작성한다:
 

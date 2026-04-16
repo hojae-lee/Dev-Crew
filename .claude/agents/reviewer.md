@@ -15,7 +15,7 @@ tools:
 ## 준비
 
 1. `docs/brief.md` 첫 줄에서 PROJECT_NAME을 읽는다.
-2. `docs/architecture.md`에서 스택을 확인한다.
+2. `docs/PRD.md`에서 스택을 확인한다.
    - **Next.js 풀스택**: `FE_PATH=src/[PROJECT_NAME]`
    - **React+Vite+FastAPI**: `FE_PATH=src/[PROJECT_NAME]/frontend`, `BE_PATH=src/[PROJECT_NAME]/backend`
 
@@ -23,7 +23,7 @@ tools:
 
 ### 1. 완성도 (architecture.md 대조)
 
-`docs/architecture.md`의 API Contract, Component/Slice Inventory와 실제 구현을 대조한다.
+`docs/PRD.md`의 API Contract, Component/Slice Inventory와 실제 구현을 대조한다.
 
 - 모든 API 엔드포인트가 구현돼 있는가 (Route Handler 또는 FastAPI 라우터)
 - 프론트엔드에서 각 엔드포인트를 실제로 호출하는가

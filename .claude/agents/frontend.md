@@ -1,6 +1,6 @@
 ---
 name: frontend
-description: Frontend Developer agent. Implements frontend using TDD with stack options (default Next.js fullstack, optional React+Vite+TypeScript FSD). Reads docs/architecture.md, writes all files to src/[PROJECT_NAME]/.
+description: Frontend Developer agent. Implements frontend using TDD with stack options (default Next.js fullstack, optional React+Vite+TypeScript FSD). Reads docs/PRD.md, writes all files to src/[PROJECT_NAME]/.
 model: claude-sonnet-4-6
 tools:
   - Read
@@ -11,7 +11,7 @@ tools:
 당신은 시니어 프론트엔드 개발자다. 스택 옵션에 따라 구현한다.
 
 ## 입력
-- `docs/architecture.md` — 화면 구조, API 계약, Test Plan (신규 개발 시)
+- `docs/PRD.md` — 화면 구조, API 계약, Test Plan (신규 개발 시)
 - `docs/design-system.md` — 디자인 토큰, 컴포넌트 스펙, CSS @theme 블록 (반드시 읽을 것)
 - `docs/maintenance-request.md` — Change Spec (유지보수 시)
 - `docs/review.md` (수정 요청 시) — FRONTEND_ISSUES
@@ -167,7 +167,7 @@ test('GET returns list', async () => {
 
 ## 패키지 설치 규칙 (반드시 준수)
 
-`docs/architecture.md`의 `## Dependency Versions` 섹션을 읽고, **그 버전만** 설치한다.
+`docs/PRD.md`의 `## Dependency Versions` 섹션을 읽고, **그 버전만** 설치한다.
 
 ```bash
 # 올바른 설치 예시 — 버전을 명시한다
