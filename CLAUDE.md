@@ -259,7 +259,7 @@ API 문서: http://localhost:8000/docs
 
 | 영역             | 기본 (Next.js 풀스택)                            | 옵션 (React+Vite+FastAPI)                        |
 | ---------------- | ------------------------------------------------ | ------------------------------------------------ |
-| Framework        | Next.js 14+ (App Router)                         | React 19 + Vite 5 + TypeScript 5 (FSD)           |
+| Framework        | Next.js 16 (App Router, 풀스택)                  | React 19 + Vite 5 + TypeScript 5 (FSD)           |
 | API              | Route Handler (`app/api/*/route.ts`)             | Python 3.11+ + FastAPI + SQLAlchemy 2.0          |
 | Database         | Prisma ORM + SQLite (`prisma/dev.db`)            | SQLite (`src/[PROJECT_NAME]/backend/app.db`)     |
 | 테스트           | Vitest + React Testing Library                   | FE: Vitest + RTL / BE: pytest + httpx            |

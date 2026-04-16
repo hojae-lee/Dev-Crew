@@ -20,7 +20,7 @@ tools:
 `docs/brief.md`의 스택 선택에 따라 아래 두 경우 중 하나를 적용한다.
 
 **기본: Next.js 풀스택** (명시적 요청이 없으면 이것)
-- Framework: Next.js 14+ (App Router, 풀스택)
+- Framework: Next.js 16 (App Router, 풀스택)
 - 코드 위치: `src/[PROJECT_NAME]/` (app/, components/ 등 직접 위치)
 - 포트: 3000
 - API: App Router Route Handlers (`app/api/[resource]/route.ts`)

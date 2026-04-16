@@ -99,7 +99,7 @@ Architect / Desing은 건너뛴다.
 
 |               | 기본값                           | 옵션                                                             |
 | ------------- | -------------------------------- | ---------------------------------------------------------------- |
-| **스택**      | Next.js 14+ (App Router, 풀스택) | React 19 + Vite 5 + TypeScript 5 (FSD) + Python FastAPI + SQLite |
+| **스택**      | Next.js 16 (App Router, 풀스택) | React 19 + Vite 5 + TypeScript 5 (FSD) + Python FastAPI + SQLite |
 | **포트**      | 3000                             | FE: 5173 / BE: 8000                                              |
 | **백엔드**    | Next.js Route Handler 내장       | FastAPI + SQLAlchemy 2.0 + SQLite                                |
 | **FE 테스트** | Vitest + React Testing Library   | 동일                                                             |
