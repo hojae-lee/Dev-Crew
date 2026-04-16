@@ -29,11 +29,11 @@ claude
 
 ## 사전 요구사항
 
-| 항목 | 버전 | 확인 |
-|------|------|------|
-| Node.js | 20+ | `node --version` |
-| Python | 3.11+ | `python --version` (React+Vite+FastAPI 스택 선택 시) |
-| Claude Code | 최신 | `npm install -g @anthropic-ai/claude-code` |
+| 항목        | 버전  | 확인                                                 |
+| ----------- | ----- | ---------------------------------------------------- |
+| Node.js     | 20+   | `node --version`                                     |
+| Python      | 3.11+ | `python --version` (React+Vite+FastAPI 스택 선택 시) |
+| Claude Code | 최신  | `npm install -g @anthropic-ai/claude-code`           |
 
 ---
 
@@ -97,14 +97,14 @@ Architect / Desing은 건너뛴다.
 
 파이프라인 시작 시 선택한다.
 
-| | 기본값 | 옵션 |
-|-|--------|------|
-| **스택** | Next.js 14+ (App Router, 풀스택) | React 19 + Vite 5 + TypeScript 5 (FSD) + Python FastAPI + SQLite |
-| **포트** | 3000 | FE: 5173 / BE: 8000 |
-| **백엔드** | Next.js Route Handler 내장 | FastAPI + SQLAlchemy 2.0 + SQLite |
-| **FE 테스트** | Vitest + React Testing Library | 동일 |
-| **BE 테스트** | — | pytest + httpx |
-| **린트** | ESLint | ESLint + Ruff |
+|               | 기본값                           | 옵션                                                             |
+| ------------- | -------------------------------- | ---------------------------------------------------------------- |
+| **스택**      | Next.js 14+ (App Router, 풀스택) | React 19 + Vite 5 + TypeScript 5 (FSD) + Python FastAPI + SQLite |
+| **포트**      | 3000                             | FE: 5173 / BE: 8000                                              |
+| **백엔드**    | Next.js Route Handler 내장       | FastAPI + SQLAlchemy 2.0 + SQLite                                |
+| **FE 테스트** | Vitest + React Testing Library   | 동일                                                             |
+| **BE 테스트** | —                                | pytest + httpx                                                   |
+| **린트**      | ESLint                           | ESLint + Ruff                                                    |
 
 ---
 
@@ -158,24 +158,28 @@ Q. 로그인이 필요한가요?
 ```
 
 **요구사항 확인 시**
+
 ```
 결제 기능도 넣어줘
 로그인은 빼줘
 ```
 
 **설계 확인 시**
+
 ```
 화면을 하나로 합쳐줘
 API 엔드포인트 구조 바꿔줘
 ```
 
 **디자인 확인 시**
+
 ```
 더 미니멀하게 해줘
 브랜드 컬러를 블루 계열로 바꿔줘
 ```
 
 **UI/UX 확인 시** (React+Vite+FastAPI 스택)
+
 ```
 버튼 위치 바꿔줘
 목록 페이지를 카드 레이아웃으로 바꿔줘
@@ -195,28 +199,32 @@ API 엔드포인트 구조 바꿔줘
 
 뭔가 이상하면 중간 파일들을 직접 열어볼 수 있다.
 
-| 파일 | 작성 에이전트 | 내용 |
-|------|-------------|------|
-| `docs/requirements.md` | PM | 기능 목록, 수용 기준 |
-| `docs/architecture.md` | Architect | API, DB, 화면 설계 |
-| `docs/design-system.md` | Desing | 톤앤매너, 컨셉, 디자인 토큰 |
-| `docs/qa-report.md` | QA | E2E 시나리오별 PASS/FAIL 결과 |
-| `docs/review.md` | Reviewer | 테스트/린트/빌드 결과 |
+| 파일                    | 작성 에이전트 | 내용                          |
+| ----------------------- | ------------- | ----------------------------- |
+| `docs/requirements.md`  | PM            | 기능 목록, 수용 기준          |
+| `docs/architecture.md`  | Architect     | API, DB, 화면 설계            |
+| `docs/design-system.md` | Desing        | 톤앤매너, 컨셉, 디자인 토큰   |
+| `docs/qa-report.md`     | QA            | E2E 시나리오별 PASS/FAIL 결과 |
+| `docs/review.md`        | Reviewer      | 테스트/린트/빌드 결과         |
 
 ---
 
 ## FAQ
 
 **Q. 에이전트가 중간에 멈추면?**
+
 ```
 계속해줘
 ```
+
 또는 어느 단계부터인지 지정한다.
+
 ```
 reviewer 서브에이전트부터 다시 실행해줘
 ```
 
 **Q. 에러가 났는데 뭔지 모르겠으면?**
+
 ```
 무슨 문제야? 고쳐줘
 ```
@@ -224,6 +232,7 @@ reviewer 서브에이전트부터 다시 실행해줘
 **Q. 기술 스택을 바꾸고 싶으면?**
 
 파이프라인 시작 전 Step 0에서 선택할 수 있다. 아이디어와 함께 미리 말해도 된다.
+
 ```
 React+Vite + FastAPI 스택으로 만들어줘
 ```
@@ -231,9 +240,11 @@ React+Vite + FastAPI 스택으로 만들어줘
 **Q. 기존 코드에 기능 추가하고 싶으면?**
 
 `src/` 디렉터리가 있으면 자동으로 유지보수 모드로 전환된다.
+
 ```
 다크모드 추가해줘
 ```
+
 ```
 삭제할 때 확인 팝업 넣어줘
 ```
@@ -246,7 +257,7 @@ React+Vite + FastAPI 스택으로 만들어줘
 claude-architect/
 ├── CLAUDE.md               ← 오케스트레이터 (파이프라인 전체 정의)
 ├── README.md               ← 이 파일
-├── ARCHITECTURE.md         ← 기술 아키텍처 (설계 결정, Anthropic 용어)
+├── ARCHITECTURE.md         ← 기술 아키텍처 (설계 결정, 주요 개념)
 │
 ├── .claude/agents/         ← 서브에이전트 정의 (Claude Code가 로드)
 │   ├── interviewer.md      ← Step 0: 아이디어 방향 결정 + 환경 확인 (Opus)
@@ -277,4 +288,3 @@ claude-architect/
 ```
 
 기술 아키텍처와 설계 결정 → [ARCHITECTURE.md](./ARCHITECTURE.md)
-블로그 포스트 → [blog.md](./blog.md)
