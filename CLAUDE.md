@@ -20,13 +20,21 @@
 
 ## 파이프라인
 
-### Step 0: 인터뷰 + 사전 확인 (Interviewer 에이전트) ✋
+### Step 0: 아이디어 인터뷰 (Interviewer 에이전트) ✋
 
 `interviewer` 서브에이전트를 실행한다:
 
-> "The user has just shared a new project idea. Greet them, listen to their idea, and conduct the pre-flight check (project name, environment, stack, ports, bash permissions) in a single message. Then write docs/brief.md with the project name on the first line as '# PROJECT_NAME: [name]'."
+> "The user has just shared a new project idea. React to the idea decisively — highlight what's interesting, suggest a better angle if you see one. Ask the user to confirm the direction via AskUserQuestion. Once confirmed, write docs/brief.md (PROJECT_NAME: TBD on the first line)."
 
 완료될 때까지 기다린다. `docs/brief.md`가 생성된 뒤에만 Step 1로 진행한다.
+
+### Step 1: 요구사항 정의 (PM 인터뷰)
+
+`pm` 서브에이전트를 실행한다:
+
+> "Read @docs/brief.md. First question must be the project name (lowercase, hyphens allowed, used as folder name src/[name]/). Then ask 2–4 requirements questions in the same message. Once you receive the project name, immediately update the first line of docs/brief.md to '# PROJECT_NAME: [name]'. After the interview (max 2 rounds), write docs/requirements.md."
+
+PM이 사용자와 직접 티키타카한 뒤 `docs/brief.md` 첫 줄을 업데이트하고 `docs/requirements.md`를 작성한다. 완료될 때까지 기다린다.
 
 `docs/brief.md` 첫 줄은 반드시 아래 형식이어야 한다:
 ```
@@ -34,14 +42,6 @@
 ```
 
 이후 모든 에이전트 프롬프트에서 `[PROJECT_NAME]`은 이 값을 지칭한다.
-
-### Step 1: 요구사항 정의 (PM 인터뷰)
-
-`pm` 서브에이전트를 실행한다:
-
-> "Read @docs/brief.md, interview the user with AskUserQuestion to clarify requirements (max 2 rounds, 3–5 questions per round), then write the finalized output to docs/requirements.md."
-
-PM이 사용자와 직접 티키타카한 뒤 `docs/requirements.md`를 작성한다. 완료될 때까지 기다린다.
 
 ### Step 1.5: 요구사항 사용자 확인 (Human in the Loop) ✋
 
@@ -107,9 +107,9 @@ PM이 사용자와 직접 티키타카한 뒤 `docs/requirements.md`를 작성�
 
 ### Step 3.6: 디자인 시스템 정의 (Desing) 🎨
 
-`desing` 서브에이전트를 실행한다:
+`design` 서브에이전트를 실행한다:
 
-> "Read @docs/requirements.md and @docs/architecture.md. Act as a product designer. Recommend 2-3 tone-and-manner options and 2-3 concept directions first, then pick one best direction with clear rationale. Based on the selected direction, automatically define a practical design system token set (color, typography, spacing, radius, shadow), component states, and screen-level application guidance. Write the output to docs/design-system.md following @agents/desing.md."
+> "Read @docs/requirements.md and @docs/architecture.md. Act as a product designer. Recommend 2-3 tone-and-manner options and 2-3 concept directions first, then pick one best direction with clear rationale. Based on the selected direction, automatically define a practical design system token set (color, typography, spacing, radius, shadow), component states, and screen-level application guidance. Write the output to docs/design-system.md."
 
 완료될 때까지 기다린다.
 
@@ -151,7 +151,7 @@ PM이 사용자와 직접 티키타카한 뒤 `docs/requirements.md`를 작성�
 
 `frontend` 서브에이전트를 실행한다:
 
-> "Read @docs/brief.md (first line contains PROJECT_NAME), @docs/architecture.md, and @docs/design-system.md. Implement the application following @agents/frontend.md. Default stack is Next.js App Router fullstack — write all files to src/[PROJECT_NAME]/ (e.g. src/[PROJECT_NAME]/app/, src/[PROJECT_NAME]/components/). If React+Vite was explicitly selected, write to src/[PROJECT_NAME]/frontend/. Apply approved design system tokens and component rules from docs/design-system.md. The app must pass npm run test AND npm run lint AND npm run build before you finish."
+> "Read @docs/brief.md (first line contains PROJECT_NAME), @docs/architecture.md, and @docs/design-system.md. Default stack is Next.js App Router fullstack — write all files to src/[PROJECT_NAME]/ (e.g. src/[PROJECT_NAME]/app/, src/[PROJECT_NAME]/components/). If React+Vite was explicitly selected, write to src/[PROJECT_NAME]/frontend/. Apply approved design system tokens and component rules from docs/design-system.md. The app must pass npm run test AND npm run lint AND npm run build before you finish."
 
 완료될 때까지 기다린다.
 
@@ -190,38 +190,56 @@ PM이 사용자와 직접 티키타카한 뒤 `docs/requirements.md`를 작성�
 
 **React+Vite + FastAPI 스택일 때만** `backend` 서브에이전트를 실행한다.
 
-> "Read @docs/brief.md (first line contains PROJECT_NAME) and @docs/architecture.md. Implement the complete backend API in src/[PROJECT_NAME]/backend/ following the TDD process in @agents/backend.md. Use Python+FastAPI+SQLAlchemy+SQLite. Set up a virtualenv at src/[PROJECT_NAME]/backend/.venv before installing dependencies. The server must pass pytest AND ruff check . before you finish."
+> "Read @docs/brief.md (first line contains PROJECT_NAME) and @docs/architecture.md. Implement the complete backend API in src/[PROJECT_NAME]/backend/ using TDD. Use Python+FastAPI+SQLAlchemy+SQLite. Set up a virtualenv at src/[PROJECT_NAME]/backend/.venv before installing dependencies. The server must pass pytest AND ruff check . before you finish."
 
 Next.js 풀스택 선택 시 이 Step은 건너뛴다.
 
-#### Step 4-C: E2E QA (공통)
+#### Step 4-C: 코드 리뷰 (Reviewer)
 
-`qa` 서브에이전트를 실행한다:
+`reviewer` 서브에이전트를 실행한다:
+
+> "Read @docs/brief.md (first line contains PROJECT_NAME). Review implemented code against @docs/requirements.md, @docs/architecture.md, and @docs/design-system.md. If React+Vite+FastAPI stack was selected, review both src/[PROJECT_NAME]/frontend/ and src/[PROJECT_NAME]/backend/. If Next.js fullstack was selected, review src/[PROJECT_NAME]/. Run actual builds/tests/lint, and write findings to docs/review.md."
+
+완료될 때까지 기다린다.
+
+### Step 5: E2E QA
+
+`docs/review.md`의 STATUS가 `PASS`일 때만 `qa` 서브에이전트를 실행한다. NEEDS_REVISION이면 Step 6으로 바로 이동한다.
 
 > "Read @docs/brief.md (first line contains PROJECT_NAME), @docs/requirements.md for MVP Acceptance Criteria. Read the project scripts to determine how to start the server(s). Start the server(s) in background, run Playwright E2E tests against each Acceptance Criteria, shut down the server(s), and write findings to docs/qa-report.md."
 
 완료될 때까지 기다린다.
 
-### Step 5: 코드 리뷰 (Reviewer)
+### Step 6: 수정 루프
 
-`reviewer` 서브에이전트를 실행한다:
+#### 6-A: Reviewer NEEDS_REVISION (최대 2회)
 
-> "Read @docs/brief.md (first line contains PROJECT_NAME). Review implemented code against @docs/requirements.md, @docs/architecture.md, and @docs/design-system.md. Also read @docs/qa-report.md and incorporate any QA_ISSUES into your findings. If React+Vite+FastAPI stack was selected, review both src/[PROJECT_NAME]/frontend/ and src/[PROJECT_NAME]/backend/. If Next.js fullstack was selected, review src/[PROJECT_NAME]/ 중심으로 검증한다. Follow @agents/reviewer.md, run actual builds/tests/lint, and write findings to docs/review.md."
-
-완료될 때까지 기다린다.
-
-### Step 6: 수정 루프 (최대 2회)
-
-`docs/review.md`를 읽는다. STATUS가 `NEEDS_REVISION`이면:
+`docs/review.md`의 STATUS가 `NEEDS_REVISION`이면:
 
 - FRONTEND_ISSUES가 있으면 `frontend` 서브에이전트를 재실행:
 
   > "Read @docs/brief.md (first line contains PROJECT_NAME) and @docs/review.md for issues found in your previous implementation. Fix all FRONTEND_ISSUES listed. For Next.js fullstack, the existing code is in src/[PROJECT_NAME]/. For React+Vite, the existing code is in src/[PROJECT_NAME]/frontend/. Re-run npm run test, npm run lint, and npm run build to verify fixes."
 
 - BACKEND_ISSUES가 있으면 `backend` 서브에이전트를 재실행 (React+Vite+FastAPI 스택일 때만):
+
   > "Read @docs/brief.md (first line contains PROJECT_NAME) and @docs/review.md for issues found in your previous implementation. Fix all BACKEND_ISSUES listed. The existing code is in src/[PROJECT_NAME]/backend/. Activate the venv first (cd src/[PROJECT_NAME]/backend && source .venv/bin/activate), then re-run pytest and ruff check . to verify fixes."
 
-수정 완료 후 Step 4-C(QA)를 다시 실행한 뒤 Step 5를 실행한다. 최대 2회 반복한다.
+수정 완료 후 Step 4-C(Reviewer)부터 다시 실행한다. 최대 2회 반복한다.
+2회 후에도 NEEDS_REVISION이면 Step 5(QA)는 건너뛰고 Step 7로 이동한다.
+
+#### 6-B: QA NEEDS_REVISION (최대 2회)
+
+`docs/qa-report.md`의 STATUS가 `NEEDS_REVISION`이면:
+
+- FRONTEND_ISSUES가 있으면 `frontend` 서브에이전트를 재실행:
+
+  > "Read @docs/brief.md (first line contains PROJECT_NAME) and @docs/qa-report.md for issues found during E2E testing. Fix all FRONTEND_ISSUES listed. For Next.js fullstack, the existing code is in src/[PROJECT_NAME]/. For React+Vite, the existing code is in src/[PROJECT_NAME]/frontend/. Re-run npm run test, npm run lint, and npm run build to verify fixes."
+
+- BACKEND_ISSUES가 있으면 `backend` 서브에이전트를 재실행 (React+Vite+FastAPI 스택일 때만):
+
+  > "Read @docs/brief.md (first line contains PROJECT_NAME) and @docs/qa-report.md for issues found during E2E testing. Fix all BACKEND_ISSUES listed. The existing code is in src/[PROJECT_NAME]/backend/. Activate the venv first (cd src/[PROJECT_NAME]/backend && source .venv/bin/activate), then re-run pytest and ruff check . to verify fixes."
+
+수정 완료 후 Step 5(QA)만 다시 실행한다. 최대 2회 반복한다.
 
 ### Step 7: 최종 안내
 
@@ -253,21 +271,6 @@ API 문서: http://localhost:8000/docs
 
 ---
 
-## 기본 기술 스택
-
-요구사항에서 명시적으로 다른 스택을 지정하지 않으면 항상 이것을 사용한다:
-
-| 영역             | 기본 (Next.js 풀스택)                            | 옵션 (React+Vite+FastAPI)                        |
-| ---------------- | ------------------------------------------------ | ------------------------------------------------ |
-| Framework        | Next.js 16 (App Router, 풀스택)                  | React 19 + Vite 5 + TypeScript 5 (FSD)           |
-| API              | Route Handler (`app/api/*/route.ts`)             | Python 3.11+ + FastAPI + SQLAlchemy 2.0          |
-| Database         | Prisma ORM + SQLite (`prisma/dev.db`)            | SQLite (`src/[PROJECT_NAME]/backend/app.db`)     |
-| 테스트           | Vitest + React Testing Library                   | FE: Vitest + RTL / BE: pytest + httpx            |
-| 린트             | ESLint                                           | FE: ESLint / BE: Ruff                            |
-| FE 포트          | 3000                                             | 5173                                             |
-| BE 포트          | -                                                | 8000 (Uvicorn)                                   |
-
----
 
 ## 파일 레이아웃
 
@@ -284,8 +287,7 @@ src/
   [PROJECT_NAME]/           # React+Vite + FastAPI:
     frontend/               #   Frontend 에이전트 출력
     backend/                #   Backend 에이전트 출력
-agents/               # 참조 문서 (에이전트 포맷 스펙)
-.claude/agents/       # Claude Code가 로드하는 실제 서브에이전트 정의
+.claude/agents/       # 서브에이전트 정의 (Claude Code가 로드)
 ```
 
 ---
@@ -346,6 +348,21 @@ agents/               # 참조 문서 (에이전트 포맷 스펙)
 > "Read @docs/brief.md (first line contains PROJECT_NAME) and @docs/maintenance-request.md for the Change Spec. Review the changes in maintenance mode: verify that (1) the requested changes are implemented correctly in src/[PROJECT_NAME]/, (2) all previously passing tests still pass (no regression), (3) lint and build pass. Write findings to docs/review.md."
 
 완료될 때까지 기다린다.
+
+### M-Step 4.5: QA 실행 여부 확인 ✋
+
+Reviewer STATUS가 `PASS`이면 **반드시 멈추고 사용자에게 확인을 받는다.**
+
+```
+✅ 코드 리뷰 통과했어요.
+
+변경된 기능에 대해 E2E 테스트도 실행할까요?
+- 예: 브라우저를 직접 열어 변경 흐름을 검증합니다 (시간 소요)
+- 아니오: 코드 리뷰 통과로 완료 처리합니다
+```
+
+- 사용자가 **예**라고 하면 → qa 서브에이전트를 실행한다 (신규 개발 모드의 Step 5와 동일)
+- 사용자가 **아니오**라고 하면 → M-Step 6으로 바로 이동한다
 
 ### M-Step 5: 수정 루프 (최대 2회)
 

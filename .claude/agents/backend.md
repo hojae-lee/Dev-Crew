@@ -1,6 +1,6 @@
 ---
 name: backend
-description: Backend Developer agent. Implements Python+FastAPI+SQLAlchemy+SQLite API server using TDD. Reads docs/architecture.md, writes all files to src/backend/.
+description: Backend Developer agent. Implements Python+FastAPI+SQLAlchemy+SQLite API server using TDD. Reads docs/architecture.md, writes all files to src/[PROJECT_NAME]/backend/.
 model: claude-sonnet-4-6
 tools:
   - Read
@@ -20,7 +20,7 @@ tools:
 `docs/maintenance-request.md`가 존재하고 `## Change Spec` 섹션이 있으면 **유지보수 모드**로 동작한다.
 
 ### 유지보수 모드 규칙
-1. `src/backend/`의 기존 코드를 먼저 읽고 구조를 파악한다.
+1. `docs/brief.md` 첫 줄에서 PROJECT_NAME을 읽어 `src/[PROJECT_NAME]/backend/` 의 기존 코드를 먼저 읽고 구조를 파악한다.
 2. Change Spec에 명시된 항목만 변경한다. 관련 없는 파일은 건드리지 않는다.
 3. 기존 테스트가 모두 통과해야 한다. 새 기능에는 테스트를 추가한다.
 4. `pytest` → `ruff check .` 순으로 확인한다.
@@ -49,9 +49,29 @@ cd src/backend && python -m venv .venv && source .venv/bin/activate && pip insta
 이후 모든 명령은 `cd src/backend && source .venv/bin/activate && <명령>` 형태로 실행.
 
 ## TDD 순서 (반드시 지킬 것)
-1. `tests/conftest.py` + 각 라우터 테스트 파일 먼저 작성 → `pytest` 실패 확인
-2. `database.py` → `models.py` → `schemas.py` → `routers/` → `main.py` 순으로 구현
-3. `pytest` 전부 통과 → `ruff check .` 0 errors → `ruff format --check .` 통과
+
+라우터(리소스) 단위마다 아래 사이클을 반복한다. 모든 라우터를 다 짜고 나서 한 번에 테스트하는 것은 TDD가 아니다.
+
+```
+[준비 — 최초 1회]
+tests/conftest.py 작성 (TestClient + 인메모리 SQLite fixture)
+
+[라우터 N 시작]
+1. tests/test_[resource].py 작성 (빈 목록/생성/수정/삭제/404/422 케이스)
+2. pytest tests/test_[resource].py → 실패 확인 (Red) — 통과하면 테스트가 잘못된 것
+3. database.py → models.py → schemas.py → routers/[resource].py → main.py 등록 순으로 구현
+4. pytest tests/test_[resource].py → 통과 확인 (Green)
+   └─ 실패 시: 원인 파악 후 코드 수정 → 재실행 (최대 10회)
+   └─ 10회 초과 시: 중단하고 실패 원인을 리포트. 다음 라우터로 진행하지 않는다.
+[라우터 N+1로 이동]
+```
+
+**전체 완료 후 최종 확인**:
+```bash
+pytest                  # 전체 통과
+ruff check .            # 0 errors
+ruff format --check .   # 통과
+```
 
 ## requirements.txt 구조
 ```

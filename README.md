@@ -42,7 +42,7 @@ claude
 ### 신규 개발
 
 ```
-✋ Step 0    Interviewer  아이디어 청취 + 방향 결정 + 환경 확인
+✋ Step 0    Interviewer  아이디어 청취 + 방향 결정
                                     docs/brief.md
       ↓
     PM        사용자 인터뷰          docs/requirements.md
@@ -53,7 +53,7 @@ claude
       ↓
 ✋ Step 3.5  설계 확인
       ↓
-    Desing     디자인 시스템         docs/design-system.md
+    Design     UI/UX + 디자인 시스템  docs/design-system.md
       ↓
 ✋ Step 3.7  디자인 확인
       ↓
@@ -63,12 +63,16 @@ claude
       ↓
     Backend    TDD 구현              src/[PROJECT_NAME]/backend/  (React+Vite+FastAPI 스택일 때만)
       ↓
+    Reviewer   코드 품질·완성도 검토   docs/review.md
+      ↓
+    NEEDS_REVISION → 수정 → Reviewer 재실행 (최대 2회)  /  PASS ↓
+      ↓
     QA         E2E 테스트            docs/qa-report.md
                (서버 기동 → Playwright → 서버 종료)
       ↓
-    Reviewer   검증                  docs/review.md
+    NEEDS_REVISION → 수정 → QA 재실행 (최대 2회)  /  PASS ↓
       ↓
-    PASS → 실행 안내  /  NEEDS_REVISION → 최대 2회 재실행
+    완료 → 실행 안내
 ```
 
 ✋ 표시된 단계에서 파이프라인이 멈추고 사용자 확인을 기다린다.
@@ -87,9 +91,11 @@ claude
     Frontend / Backend   Change Spec 항목만 최소 변경
       ↓
     Reviewer  변경 구현 확인 + 회귀 체크
+      ↓
+✋  QA 실행 여부 확인   (사용자가 선택)
 ```
 
-Architect / Desing은 건너뛴다.
+Architect / Design은 건너뛴다.
 
 ---
 
@@ -203,9 +209,9 @@ API 엔드포인트 구조 바꿔줘
 | ----------------------- | ------------- | ----------------------------- |
 | `docs/requirements.md`  | PM            | 기능 목록, 수용 기준          |
 | `docs/architecture.md`  | Architect     | API, DB, 화면 설계            |
-| `docs/design-system.md` | Desing        | 톤앤매너, 컨셉, 디자인 토큰   |
+| `docs/design-system.md` | Design        | UX 원칙, 톤앤매너, 디자인 토큰 |
+| `docs/review.md`        | Reviewer      | 코드 품질·완성도 검토 결과    |
 | `docs/qa-report.md`     | QA            | E2E 시나리오별 PASS/FAIL 결과 |
-| `docs/review.md`        | Reviewer      | 테스트/린트/빌드 결과         |
 
 ---
 
@@ -259,17 +265,15 @@ claude-architect/
 ├── README.md               ← 이 파일
 ├── ARCHITECTURE.md         ← 기술 아키텍처 (설계 결정, 주요 개념)
 │
-├── .claude/agents/         ← 서브에이전트 정의 (Claude Code가 로드)
-│   ├── interviewer.md      ← Step 0: 아이디어 방향 결정 + 환경 확인 (Opus)
+├── .claude/agents/         ← 서브에이전트 정의 (Claude Code가 자동 로드)
+│   ├── interviewer.md      ← Step 0: 아이디어 방향 결정 (Opus)
 │   ├── pm.md               ← 요구사항 인터뷰 (Opus)
 │   ├── architect.md        ← 기술 설계 (Opus)
-│   ├── desing.md           ← 디자인 시스템 (Sonnet)
-│   ├── frontend.md         ← 구현 (Sonnet)
-│   ├── backend.md          ← 구현 (Sonnet)
-│   ├── qa.md               ← 서버 기동 → Playwright E2E (Sonnet)
-│   └── reviewer.md         ← 검증 (Sonnet)
-│
-├── agents/                 ← 에이전트 포맷 스펙 (참조용)
+│   ├── design.md           ← UI/UX + 디자인 시스템 정의 (Sonnet)
+│   ├── frontend.md         ← TDD 구현 / 신규·유지보수 분기 (Sonnet)
+│   ├── backend.md          ← TDD 구현 / 신규·유지보수 분기 (Sonnet)
+│   ├── reviewer.md         ← 코드 품질·완성도 검토 (Sonnet)
+│   └── qa.md               ← 서버 기동 → Playwright E2E (Sonnet)
 │
 ├── docs/                   ← 에이전트 간 공유 메모리 (런타임 생성)
 │   ├── brief.md            ← interviewer 출력 (PROJECT_NAME 포함)
@@ -277,8 +281,8 @@ claude-architect/
 │   ├── architecture.md
 │   ├── design-system.md
 │   ├── maintenance-request.md
-│   ├── qa-report.md        ← qa 출력 (E2E 결과)
-│   └── review.md
+│   ├── review.md
+│   └── qa-report.md
 │
 └── src/
     └── [PROJECT_NAME]/     ← 최종 산출물 (런타임 생성)

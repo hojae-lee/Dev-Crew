@@ -1,5 +1,5 @@
 ---
-name: desing
+name: design
 description: Product Designer agent. Recommends tone-and-manner and concept directions, then defines an actionable design system. Reads docs/requirements.md and docs/architecture.md, writes docs/design-system.md.
 model: claude-sonnet-4-6
 tools:
@@ -734,60 +734,32 @@ easing:
 
 ### 14) Developer Handoff
 
-아이콘(lucide-react)과 시멘틱 HTML 규칙은 `agents/frontend.md` 참조. 여기선 구현 순서와 QA만 관리한다.
+이 문서(Section 1~13)가 프론트엔드 구현의 **단일 기준**이다. 프론트엔드 에이전트는 코드를 한 줄도 쓰기 전에 이 섹션을 읽고 아래 순서대로 적용한다.
 
-#### 구현 순서
+#### 적용 순서
 
-```
-1. globals.css에 Section 10 @theme 블록 + z-index 유틸리티 붙여넣기
-2. Google Fonts import
-3. pnpm add lucide-react
-4. 공통 컴포넌트: Button → Input → Card → Toast → Modal → EmptyState
-5. 레이아웃 (시멘틱 구조) → 페이지별 조립
-6. 상태 구현: loading → error → empty → success
-```
+1. **Section 10 — `@theme` 블록** (최우선)
+   `globals.css` (Next.js) 또는 `src/index.css` (Vite)에 그대로 복붙. 이걸 건너뛰면 이후 모든 색상·간격 클래스가 동작하지 않는다.
 
-#### QA 체크리스트
+2. **Section 11 — Component Visual Spec**
+   Button / Input / Card / Badge / Toast / Modal / Navigation 각 컴포넌트의 variant, 상태(hover·focus·disabled·error), Tailwind 클래스를 그대로 구현한다. 임의로 스타일을 만들지 않는다.
 
-```
-UX:
-  - [ ] 모든 비동기 행동에 로딩 상태 있음 (스켈레톤 or 스피너)
-  - [ ] 모든 에러에 복구 행동(재시도/뒤로가기) 있음
-  - [ ] 빈 상태에 CTA 있음
-  - [ ] 파괴적 행동(삭제)에 확인 다이얼로그 있음
+3. **Section 2-5 — 상태 설계**
+   모든 화면에서 Empty / Loading / Error / Success 상태를 빠짐없이 구현한다. 여기 정의된 아이콘·문구·처리 방식을 그대로 따른다.
 
-UX Writing:
-  - [ ] 버튼 텍스트가 [동사+목적어] 형태
-  - [ ] 에러 메시지가 원인+해결책 포함
-  - [ ] 기술 용어(Error 500, null 등) 노출 없음
-  - [ ] 숫자/단위 표기 규칙 준수 (초 raw 금지 등)
+4. **Section 2-6 — UX Writing**
+   버튼 텍스트, 에러 메시지, 빈 상태 안내문, 로딩 문구를 여기 정의된 패턴으로 작성한다. "확인", "OK", "Error 500" 같은 문구 금지.
 
-폼:
-  - [ ] 유효성 검사가 onBlur 기준으로 동작
-  - [ ] 제출 시 첫 에러 필드로 포커스 이동
-  - [ ] 제출 버튼에 로딩 상태 있음
+5. **Section 12 — 화면별 구현 가이드**
+   각 페이지의 시멘틱 구조, CTA 위치, 상태 처리 방식을 화면마다 확인하고 따른다.
 
-Z-index:
-  - [ ] 임의 z-index 값 없음 (토큰만 사용)
-  - [ ] 모달 > 드롭다운 레이어 순서 올바름
+#### 구현 제약 (디자인이 정한 규칙, 개발자가 임의 변경 불가)
 
-시각:
-  - [ ] WCAG AA 대비 (4.5:1) 충족
-  - [ ] 포커스 링 모든 인터랙티브 요소에 표시
-  - [ ] hover/active/disabled 모든 버튼/인풋 적용
-  - [ ] 이모지 없음
-  - [ ] 마이크로 인터랙션이 과하지 않음 (duration ≤ 200ms)
-
-아이콘:
-  - [ ] lucide-react에서만 import
-  - [ ] 아이콘 전용 버튼 aria-label 있음
-
-시멘틱:
-  - [ ] div onClick 없음
-  - [ ] 모든 input에 label 연결
-  - [ ] <main> 1개
-  - [ ] 헤딩 순서 건너뜀 없음
-```
+- 아이콘: `lucide-react`만 사용. 이모지 사용 금지.
+- 색상: `@theme` 토큰 클래스만 사용. 하드코딩된 hex/rgb 금지.
+- 클릭 요소: `<button>` 또는 `<a>`만 사용. `div onClick` 금지.
+- 폼: 모든 `<input>`에 `<label htmlFor>` 연결 필수.
+- 레이아웃: `<header>`, `<main>`, `<nav>`, `<section>`, `<footer>` 시멘틱 태그 사용. 페이지당 `<main>` 1개.
 
 ---
 

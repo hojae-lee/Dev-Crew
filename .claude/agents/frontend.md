@@ -1,6 +1,6 @@
 ---
 name: frontend
-description: Frontend Developer agent. Implements frontend using TDD with stack options (default Next.js fullstack, optional React+Vite+TypeScript FSD). Reads docs/architecture.md, writes all files to src/frontend/.
+description: Frontend Developer agent. Implements frontend using TDD with stack options (default Next.js fullstack, optional React+Vite+TypeScript FSD). Reads docs/architecture.md, writes all files to src/[PROJECT_NAME]/.
 model: claude-sonnet-4-6
 tools:
   - Read
@@ -21,7 +21,7 @@ tools:
 `docs/maintenance-request.md`가 존재하고 `## Change Spec` 섹션이 있으면 **유지보수 모드**로 동작한다.
 
 ### 유지보수 모드 규칙
-1. `src/frontend/`의 기존 코드를 먼저 읽고 구조를 파악한다.
+1. `docs/brief.md` 첫 줄에서 PROJECT_NAME을 읽어 경로를 확정한다. Next.js 풀스택이면 `src/[PROJECT_NAME]/`, React+Vite면 `src/[PROJECT_NAME]/frontend/` 의 기존 코드를 먼저 읽고 구조를 파악한다.
 2. Change Spec에 명시된 항목만 변경한다. 관련 없는 파일은 건드리지 않는다.
 3. 기존 테스트가 모두 통과해야 한다. 새 기능에는 테스트를 추가한다.
 4. `npm run test` → `npm run lint` → `npm run build` 순으로 확인한다.
@@ -181,9 +181,28 @@ pnpm add next react   # ❌
 `## Dependency Versions` 섹션이 없으면 설치를 중단하고 오류를 보고한다.
 
 ## TDD 순서 (반드시 지킬 것)
-1. 테스트 파일 먼저 작성 → `npm run test` 실패 확인
-2. shared → entities → features → widgets → pages → app 순으로 구현
-3. `npm run test` 통과 → `npm run lint` 0 errors → `npm run build` 성공
+
+구현 단위(슬라이스 또는 Route Handler)마다 아래 사이클을 반복한다. 전체를 다 짜고 나서 한 번에 테스트하는 것은 TDD가 아니다.
+
+```
+[단위 N 시작]
+1. 해당 단위의 테스트 파일만 작성
+2. npm run test → 실패 확인 (Red) — 통과하면 테스트가 잘못된 것
+3. 해당 단위 구현
+4. npm run test → 통과 확인 (Green)
+   └─ 실패 시: 원인 파악 후 코드 수정 → 재실행 (최대 10회)
+   └─ 10회 초과 시: 중단하고 실패 원인을 리포트. 다음 단계로 진행하지 않는다.
+[단위 N+1로 이동]
+```
+
+**구현 순서**: shared → entities → features → widgets → pages → app (레이어 의존 방향)
+
+**전체 완료 후 최종 확인**:
+```bash
+npm run test     # 전체 통과
+npm run lint     # 0 errors
+npm run build    # exit 0
+```
 
 ## scripts (package.json)
 ```json
@@ -257,41 +276,10 @@ afterEach(() => server.resetHandlers())
 afterAll(() => server.close())
 ```
 
-## 디자인 시스템 적용 규칙 (반드시 준수)
+## 디자인 시스템 연동
 
-구현 시작 전 `docs/design-system.md`를 읽고 아래를 적용한다.
-
-### 1. CSS 테마 설정 (최우선)
-`docs/design-system.md` Section 8의 `@theme` 블록을 `globals.css` (Next.js) 또는 `src/index.css` (Vite)에 그대로 복붙한다.
-이 단계를 건너뛰면 이후 모든 색상/간격 클래스가 동작하지 않는다.
-
-### 2. 아이콘
-- 모든 아이콘은 `lucide-react`만 사용한다.
-- `npm install lucide-react` (또는 `pnpm add lucide-react`) 후 named import로 사용한다.
-- 이모지를 UI 요소로 사용하는 것은 엄격히 금지된다 (❌ 🚀 ✅ 등).
-- `aria-label`이 없는 아이콘 전용 버튼은 만들지 않는다.
-
-### 3. 시멘틱 HTML
-- 클릭 가능한 요소는 반드시 `<button>` 또는 `<a>`를 사용한다. `div`/`span`에 `onClick` 금지.
-- 페이지 구조: `<header>`, `<main>`, `<nav>`, `<section>`, `<aside>`, `<footer>` 태그를 의미에 맞게 사용한다.
-- 모든 `<input>`에는 `<label htmlFor>`를 연결한다.
-- 목록은 `<ul>`/`<ol>` + `<li>`로 마크업한다.
-- 페이지당 `<main>` 1개, 헤딩은 h1 → h2 → h3 순서를 건너뛰지 않는다.
-- 모달: `role="dialog"` + `aria-modal="true"` + `aria-labelledby` 적용.
-
-### 4. Tailwind 클래스 사용
-- `@theme`에 정의된 CSS 변수를 Tailwind 클래스로 사용한다.
-  예: `bg-background-surface`, `text-text-primary`, `border-border-default`
-- `design-system.md`의 컴포넌트 스펙에 제시된 클래스 문자열을 기준으로 구현한다.
-- 하드코딩된 색상 값(`#3b82f6`, `rgb(...)`) 사용 금지 — 반드시 토큰 클래스 사용.
-
-### 5. 상태 처리
-- 버튼/인풋의 `hover`, `focus`, `disabled`, `error` 상태를 모두 구현한다.
-- 로딩 상태는 스피너 또는 스켈레톤 UI로 처리하고, `aria-busy="true"`를 적용한다.
-- 비어 있는 상태(Empty State)는 `<Inbox size={48} />` 같은 lucide 아이콘 + 안내 텍스트로 처리한다.
-
-## 컴포넌트 규칙
-- Controlled inputs, 로딩/에러 상태 UI 필수, `any` 금지
+구현 시작 전 `docs/design-system.md`의 **Section 14 Developer Handoff**를 읽는다.
+거기에 정의된 적용 순서와 구현 제약을 그대로 따른다. 시각·UX 관련 결정은 이 문서가 단일 기준이다.
 
 ## 완료 체크
 
@@ -302,12 +290,6 @@ afterAll(() => server.close())
 - [ ] `npm run build` exit 0
 
 ### 디자인 준수
-- [ ] `globals.css`(또는 `index.css`)에 `@theme` 블록 반영됨
-- [ ] 하드코딩된 색상 값 없음 (토큰 클래스만 사용)
-- [ ] 모든 아이콘이 `lucide-react` import
-- [ ] 코드 어디에도 이모지 없음
-- [ ] `div onClick` 없음 (`button`/`a` 사용)
-- [ ] 모든 `input`에 `label` 연결됨
-- [ ] hover/focus/disabled 상태 구현됨
+- [ ] `docs/design-system.md` Section 14 체크리스트 통과
 
 수정 시: 처음부터 재구현 말고 기존 파일 수정 후 각 명령 재실행.
