@@ -220,6 +220,49 @@ Route Handler 테스트는 `lib/db`를 vi.mock으로 모킹해 Prisma 의존 없
 
 ---
 
+## 보안 원칙
+
+### 입력값 검증
+
+- 모든 외부 입력(request body, query params)은 Route Handler에서 즉시 검증한다.
+- 문자열 필드에 최대 길이 제한을 둔다 (title ≤ 200자, description ≤ 2000자 등).
+- 숫자형 파라미터(year, month, id 등)는 합리적 범위를 검증한다.
+- `Number(id)`처럼 형변환 후 `isNaN` 또는 `<= 0` 체크를 반드시 포함한다.
+
+### 파일 업로드
+
+- MIME type(클라이언트 제어 가능)만 믿지 말고 **파일 헤더(magic bytes)**로 실제 파일 타입을 검증한다.
+- 업로드 파일명에서 확장자는 허용 목록(whitelist)으로만 추출한다 — 사용자 제공 파일명을 경로에 직접 사용 금지.
+- 저장 경로는 반드시 `path.resolve`로 정규화 후 허용 디렉터리 안인지 확인한다 (path traversal 방지).
+- 삭제 경로도 동일하게 정규화 + 범위 확인 후 처리한다.
+
+### AI / LLM 프롬프트
+
+- 사용자 입력을 프롬프트에 삽입할 때는 XML 태그로 경계를 명확히 한다.
+  ```
+  // Bad:  Input: "${userText}"
+  // Good: <user_input>${userText}</user_input>
+  ```
+- LLM이 반환한 JSON은 반드시 스키마 검증 후 사용한다 — `JSON.parse` 결과를 그대로 신뢰 금지.
+- AI 엔드포인트에는 rate limiting을 적용한다 (Next.js middleware 또는 외부 서비스 활용).
+
+### 환경변수
+
+- 필수 환경변수(`OPENAI_API_KEY` 등)는 앱 시작 시 존재 여부를 확인하고, 없으면 명시적 에러로 중단한다.
+  ```typescript
+  if (!process.env.OPENAI_API_KEY) throw new Error('OPENAI_API_KEY is required')
+  ```
+- `NEXT_PUBLIC_` 접두사는 클라이언트에 노출되어도 되는 값에만 사용한다.
+- `.env.local`은 `.gitignore`에 포함되어 있는지 반드시 확인한다.
+
+### 응답 보안
+
+- 에러 응답에 스택 트레이스, 내부 경로, DB 구조 등 민감 정보를 포함하지 않는다.
+- `console.error(e)`는 서버 로그용으로만 사용하고, 클라이언트에는 일반화된 메시지만 반환한다.
+- 공개 엔드포인트(공유 링크 등)의 응답에서 내부 ID나 사용자 정보 등 불필요한 필드를 제거한다.
+
+---
+
 ## 완료 체크
 
 - [ ] 테스트 먼저 작성 후 실패 확인
