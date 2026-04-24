@@ -121,6 +121,10 @@ Next.js `<Image>` 컴포넌트를 사용하고, 외부 이미지는 `next.config
 
 초기 설정 명령: `pnpm prisma generate` → `pnpm prisma db push`
 
+`package.json` scripts에 반드시 추가한다:
+- `"postinstall": "prisma generate"` — `pnpm install` 시 자동 generate
+- `"build"`: `"prisma generate && next build"` — 빌드 전 항상 generate 보장
+
 ### 백엔드 레이어 구조
 
 Route Handler는 요청/응답만 담당한다. 비즈니스 로직은 Service, DB 접근은 Repository로 분리한다.
